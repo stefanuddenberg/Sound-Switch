@@ -1,3 +1,7 @@
+FROM andrewosh/binder-base
+#FROM binder-project/binder:binder/images/base/Dockerfile
+
+MAINTAINER Stefan Uddenberg <stefan.uddenberg@gmail.com>
 # Install FFMPEG
 RUN wget http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz
 RUN tar xvfJ ffmpeg-release-64bit-static.tar.xz
