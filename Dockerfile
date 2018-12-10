@@ -11,4 +11,4 @@ USER root
 RUN ln ffmpeg-*-64bit-static/ffmpeg /usr/local/bin/ffmpeg
 
 # Install dependencies
-RUN pip install simpleaudio numpy pydub
+# RUN pip install simpleaudio numpy pydub
