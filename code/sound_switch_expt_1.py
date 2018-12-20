@@ -21,112 +21,20 @@ import numpy as np
 import os
 import random
 import socket
-from stefan_utils import tabify, rgb2psychorgb, quit_experiment
+from stefan_utils import tabify
+from stefan_utils import rgb2psychorgb
+from stefan_utils import quit_experiment
+from stefan_utils import get_subject_info
+from stefan_utils import make_data_file
+from stefan_utils import make_subject_file
+from stefan_utils import write_to_file
+from stefan_utils import show_instructions
 
 logging.basicConfig(level=logging.DEBUG)
 
 ################################
 # * FUNCTIONS
 ################################
-
-def get_subject_info(experiment_name):  # GUI for entering experiment info
-	last_params_file_name = f"{data_dir}{experiment_name}_#_lastParams.json"
-	try:
-		# note the '#', for file-ordering purposes
-		# exp_info = misc.fromFile(last_params_file_name)
-		with open(last_params_file_name, 'r') as fp:
-			exp_info = json.load(fp)
-	except:
-		exp_info = {
-			'Experiment': experiment_name,
-			'Testing Location': '',
-			'Experimenter Initials': 'sdu',
-			'Subject Initials': '',
-			'Subject ID': '',
-			'Subject Age': '',
-			'Subject Gender': '',
-		}
-
-	exp_info['Start Date'] = data.getDateStr()
-	dlg = gui.DlgFromDict(exp_info, title=experiment_name, fixed=['Start Date'])
-	if dlg.OK:
-		# misc.toFile(last_params_file_name, exp_info)
-		with open(last_params_file_name, 'w') as fp:
-			json.dump(exp_info, fp)
-	else:
-		core.quit()
-
-	return exp_info
-
-
-# Makes a text file to save data, will not overwrite existing data. Add variable names
-def make_data_file(exp_info, info_order, sync=True):
-	file_name = "_".join([exp_info['Experiment'], exp_info['Subject ID'], exp_info['Subject Initials'],
-						exp_info['Subject Age'], exp_info['Subject Gender'], exp_info['Start Date']])
-	ext = ''
-	i = 1
-	while os.path.exists(f"{file_name}{ext}.txt"):  # changes filename extension to avoid overwriting
-		ext = '-' + str(i)
-		i += 1
-
-	file_name = f"{data_dir}{file_name}{ext}"
-	data_file = open(f"{file_name}.txt", 'a')
-	line = tabify(info_order) + '\n'
-	data_file.write(line)
-	if sync:
-		data_file.flush()
-		os.fsync(data_file)
-
-	return data_file
-
-
-def make_subject_file(exp_info, sub_info_order, sync=True):
-	file_name = f"{data_dir}subFile_{exp_info['Experiment']}.txt"
-	# Write headers if necessary
-	if not os.path.exists(file_name):
-		line = '\t'.join(sub_info_order)  # TABify
-		line += '\n'  # add a newline
-		with open(file_name, 'a') as sub_file:
-			sub_file.write(line)
-
-	sub_file = open(file_name, 'a')
-	line = '\t'.join([str(exp_info[variable]) for variable in sub_info_order]) # TABify
-	line += '\n'  # add a newline
-	sub_file.write(line)
-	if sync:
-		sub_file.flush()
-		os.fsync(sub_file)
-
-	return sub_file
-
-
-def write_to_file(file_handle, info, info_order, sync=True):
-
-	""" Writes a trial (a dictionary) to a fileHandle
-	:type file_handle:
-	:param file_handle:
-
-	:type info:
-	:param info:
-
-	:type info_order:
-	:param info_order:
-
-	:type sync:
-	:param sync:
-
-	:raises:
-
-	:rtype: void
-	"""
-
-	line = '\t'.join([str(info[variable]) for variable in info_order])  # TABify
-	line += '\n'  # add a newline
-	file_handle.write(line)
-	if sync:
-		file_handle.flush()
-		os.fsync(file_handle)
-
 
 def create_rating_scale():
 	""" Generates a new rating scale object
@@ -170,26 +78,6 @@ def create_rating_scale():
 	]
 
 	return rating_scale
-
-
-def show_instructions(instructions_list):
-	""" Shows each instruction string in the list
-	one at a time.
-	:type instructions_list: list
-	:param instructions_list: list of instruction strings
-
-	:raises: N/A
-
-	:rtype: void
-	"""
-
-	for instr in instructions_list:
-		instructions.setText(instr)
-		instructions.draw()
-		win.flip()
-		keys = event.waitKeys(keyList=[v for k, v in key_dict.items()])
-		if key_dict["quit"] in keys:
-			quit_experiment(win, core)
 
 
 def get_trial_data():
@@ -375,7 +263,7 @@ sub_info_order = [
 	'Experimenter Initials',
 	'Subject Initials',
 ]
-exp_info = get_subject_info(experiment_name)
+exp_info = get_subject_info(data_dir, experiment_name)
 
 logging.debug(exp_info["Subject ID"])
 logging.debug(type(exp_info["Subject ID"]))
@@ -389,8 +277,8 @@ exp_info["Condition"] = condition # save to exp_info
 question_label = question_labels[condition]
 
 # Make data files
-data_file = make_data_file(exp_info, info_order)
-subject_file = make_subject_file(exp_info, sub_info_order)
+data_file = make_data_file(data_dir, exp_info, info_order)
+subject_file = make_subject_file(data_dir, exp_info, sub_info_order)
 
 ################################
 # * DISPLAY ITEMS
@@ -517,7 +405,7 @@ instructions_list.append(
 )
 instructions_list.append("Let's give that a try! Press backslash (\\) to do a practice trial.")
 
-show_instructions(instructions_list)
+show_instructions(instructions, instructions_list, key_dict, win)
 
 ################################
 # * PRACTICE
@@ -533,7 +421,7 @@ instructions_list = [
 	"Any questions? If not, please press backslash (\\) to start the experiment for real."
 ]
 
-show_instructions(instructions_list)
+show_instructions(instructions, instructions_list, key_dict, win)
 
 # Main loop
 trial_num = 0
@@ -558,7 +446,7 @@ instructions_list = [
 	"Press backslash (\\) whenever you're ready to continue."
 ]
 
-show_instructions(instructions_list)
+show_instructions(instructions, instructions_list, key_dict, win)
 
 # Test-retest loop
 block_num = 2
@@ -582,7 +470,7 @@ instructions_list = [
 	"You're done! Please go to your experimenter."
 ]
 
-show_instructions(instructions_list)
+show_instructions(instructions, instructions_list, key_dict, win)
 
 quit_experiment(win, core)
 
