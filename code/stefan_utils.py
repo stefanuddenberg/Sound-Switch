@@ -16,3 +16,8 @@ def tabify(s):
 # (with 0 being gray)
 def rgb2psychorgb(rgbVal):
     return tuple((x - 127.5) / 127.5 for index, x in enumerate(rgbVal))
+
+def quit_experiment(win, core):
+    win.close()
+    core.quit()
+
