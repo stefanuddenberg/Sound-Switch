@@ -3,8 +3,7 @@
 # beauty or patterned-ness of those stimuli using a slider.
 # Author: Stefan Uddenberg
 
-# TODO: Show Alex et al.
-# TODO: Decide on final stimuli
+# TODO: Use guitar and tones intermixed. Both sets of sounds need to be remade with extra 20ms crossfaded silences between notes, due to the lower notes blending together.
 # TODO: Update screen parameters
 
 ################################
