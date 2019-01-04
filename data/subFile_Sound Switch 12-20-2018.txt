@@ -6,3 +6,8 @@ Subject ID	Condition	Start Date	Experiment	Testing Location	Experimenter Initial
 12	beautiful	2018_Dec_21_1719	Sound Switch 12-20-2018	home	sdu	sdu
 12	beautiful	2018_Dec_21_1728	Sound Switch 12-20-2018	home	sdu	sdu
 12	beautiful	2018_Dec_21_1731	Sound Switch 12-20-2018	home	sdu	sdu
+12	beautiful	2018_Dec_31_2223	Sound Switch 12-20-2018	home	sdu	sdu
+13	patterned	2019_Jan_03_2018	Sound Switch 12-20-2018	home	sdu	sdu
+13	patterned	2019_Jan_03_2020	Sound Switch 12-20-2018	home	sdu	sdu
+13	patterned	2019_Jan_03_2021	Sound Switch 12-20-2018	home	sdu	sdu
+13	patterned	2019_Jan_03_2025	Sound Switch 12-20-2018	home	sdu	sdu
