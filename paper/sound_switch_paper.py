@@ -83,7 +83,7 @@ import pandas as pd
 import scipy
 import seaborn as sns
 from dfply import *
- 
+
 # iPyPublish imports
 # from ipypublish.scripts.ipynb_latex_setup import *
 # from IPython.display import SVG, display, Markdown
@@ -137,7 +137,7 @@ all_data.reset_index(inplace=True, drop=True)
 all_data.head()
 
 # %% [markdown]
-# ## Determine stimulus type
+# ### Determine stimulus type
 
 # %%
 def get_stimulus_type(row):
@@ -150,7 +150,7 @@ all_data["Stimulus Type"] = all_data.apply(get_stimulus_type, axis=1)
 all_data.head()
 
 # %% [markdown]
-# ## Determine if trial is a repeated stimulus
+# ### Determine if trial is a repeated stimulus
 
 # %%
 num_trials = 200
@@ -161,7 +161,7 @@ all_data["Repeat Trial"] = all_data["Trial #"] >= start_repeated_trial_index
 all_data.head()
 
 # %% [markdown]
-# ## Get subject reliability
+# ### Get subject reliability
 
 # %%
 subject_reliability_df = pd.DataFrame(
@@ -213,6 +213,57 @@ for subject_id in subject_ids:
 subject_reliability_df
 
 # %% [markdown]
+# ### Remove unreliable subjects
+
+# %%
+# Keep subjects with positive correlation
+subject_reliability_df = subject_reliability_df[subject_reliability_df["correlation"] >= 0]
+# Keep subjects that have defined data
+subject_reliability_df = subject_reliability_df.replace(
+    [np.inf, -np.inf], np.nan
+).dropna()
+reliable_subjects = subject_reliability_df["subject_id"].unique()
+no_repeat_data = all_data[(all_data["Subject ID"].isin(reliable_subjects)) & (all_data["Repeat Trial"]==False)]
+print(f"Remaining participants: {subject_reliability_df.shape[0]}")
+print(f"Data without repeat trials:")
+no_repeat_data.head()
+
+# %% [markdown]
+# ### Group results
+# Keep only reliable subjects and remove repeated trials.
+
+# %%
+main_results = (
+    no_repeat_data
+    >> group_by("Condition", "Switch Rate", "Stimulus Type")
+    >> summarize(mean_ratings=X.Rating.mean(), sd_ratings=X.Rating.std())
+)
+main_results.head()
+
+# %% [markdown]
+# ### Plot results
+
+# %%
+f, ax = plt.subplots(2, 1, figsize=(8, 12), sharex=True)
+sns.despine()
+for i, condition in enumerate(main_results["Condition"].unique()):
+    these_results = main_results >> mask(X["Condition"] == condition)
+    # Convert complexity labels to more informative string labels.
+    # Note that seaborn has problems with numbers as categories, 
+    # and simple string conversion via `str` doesn't work.    
+    sns.lineplot(
+        x="Switch Rate",
+        y="mean_ratings",
+        hue="Stimulus Type",
+        data=these_results,
+        ax=ax[i],
+        linewidth=4
+    )
+    ax[i].set_title(f"'{condition.title()}' Results")
+    ax[i].set(xlabel='Switch Rate', ylabel='Mean Rating')    
+plt.show()
+
+# %% [markdown]
 # # Sanity checks
 
 # %% [markdown]
@@ -230,22 +281,38 @@ for subject_id in subject_ids:
 # Should all be 10,100 ms long.
 
 # %%
-from pydub import AudioSegment
+test_sanity = False
+if test_sanity:
+    from pydub import AudioSegment
 
-stimulus_dir = "../stimuli/combined"
-prefix = "switch-"
-extension = ".mp3"
-search = f"{stimulus_dir}/{prefix}*{extension}"
+    stimulus_dir = "../stimuli/combined"
+    prefix = "switch-"
+    extension = ".mp3"
+    search = f"{stimulus_dir}/{prefix}*{extension}"
 
-song_durations = []
-for song_name in glob.glob(search):
-    song = AudioSegment.from_mp3(song_name)
-    song_durations.append(len(song))
-    
-print(set(song_durations))
+    song_durations = []
+    for song_name in glob.glob(search):
+        song = AudioSegment.from_mp3(song_name)
+        song_durations.append(len(song))
+
+    print(set(song_durations))
+
+# %% [markdown]
+# # Exploration
+
+# %% [markdown]
+# ## RT
+
+# %%
+sns.set_style("ticks")
+sns.distplot(all_data["RT"])
+sns.despine()
 
 # %% [markdown]
 # # Scrap
+
+# %%
+
 
 # %% [markdown]
 #
