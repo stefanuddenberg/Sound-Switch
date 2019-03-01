@@ -1,81 +1,80 @@
-# ---
-# jupyter:
-#   hide_input: false
-#   jupytext:
-#     metadata_filter:
-#       cells:
-#         additional: all
-#       notebook:
-#         additional: all
-#     text_representation:
-#       extension: .py
-#       format_name: percent
-#       format_version: '1.2'
-#       jupytext_version: 0.8.6
-#   kernelspec:
-#     display_name: Python 3
-#     language: python
-#     name: python3
-#   language_info:
-#     codemirror_mode:
-#       name: ipython
-#       version: 3
-#     file_extension: .py
-#     mimetype: text/x-python
-#     name: python
-#     nbconvert_exporter: python
-#     pygments_lexer: ipython3
-#     version: 3.6.7
-#   toc:
-#     base_numbering: 1
-#     nav_menu: {}
-#     number_sections: true
-#     sideBar: true
-#     skip_h1_title: false
-#     title_cell: Table of Contents
-#     title_sidebar: Contents
-#     toc_cell: false
-#     toc_position: {}
-#     toc_section_display: block
-#     toc_window_display: false
-#   toc-autonumbering: false
-#   varInspector:
-#     cols:
-#       lenName: 16
-#       lenType: 16
-#       lenVar: 40
-#     kernels_config:
-#       python:
-#         delete_cmd_postfix: ''
-#         delete_cmd_prefix: 'del '
-#         library: var_list.py
-#         varRefreshCmd: print(var_dic_list())
-#       r:
-#         delete_cmd_postfix: ') '
-#         delete_cmd_prefix: rm(
-#         library: var_list.r
-#         varRefreshCmd: 'cat(var_dic_list()) '
-#     types_to_exclude:
-#     - module
-#     - function
-#     - builtin_function_or_method
-#     - instance
-#     - _Feature
-#     window_display: false
-# ---
+---
+jupyter:
+  hide_input: false
+  jupytext:
+    metadata_filter:
+      cells:
+        additional: all
+      notebook:
+        additional: all
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.0'
+      jupytext_version: 0.8.6
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+  language_info:
+    codemirror_mode:
+      name: ipython
+      version: 3
+    file_extension: .py
+    mimetype: text/x-python
+    name: python
+    nbconvert_exporter: python
+    pygments_lexer: ipython3
+    version: 3.6.7
+  toc:
+    base_numbering: 1
+    nav_menu: {}
+    number_sections: true
+    sideBar: true
+    skip_h1_title: false
+    title_cell: Table of Contents
+    title_sidebar: Contents
+    toc_cell: false
+    toc_position: {}
+    toc_section_display: block
+    toc_window_display: false
+  toc-autonumbering: false
+  varInspector:
+    cols:
+      lenName: 16
+      lenType: 16
+      lenVar: 40
+    kernels_config:
+      python:
+        delete_cmd_postfix: ''
+        delete_cmd_prefix: 'del '
+        library: var_list.py
+        varRefreshCmd: print(var_dic_list())
+      r:
+        delete_cmd_postfix: ') '
+        delete_cmd_prefix: rm(
+        library: var_list.r
+        varRefreshCmd: 'cat(var_dic_list()) '
+    types_to_exclude:
+    - module
+    - function
+    - builtin_function_or_method
+    - instance
+    - _Feature
+    window_display: false
+---
 
-# %% [markdown]
-# # Sound Switch
+# Sound Switch
 
-# %% [markdown]
-# # Imports
 
-# %%
-# %reset -f
-# %matplotlib inline
-# %config InlineBackend.figure_format = "retina" # High-res graphs (rendered irrelevant by svg option below)
-# %config InlineBackend.print_figure_kwargs = {"bbox_inches": "tight"} # No extra white space
-# %config InlineBackend.figure_format = "svg" # 'png' is default
+# Imports
+
+```python
+%reset -f
+%matplotlib inline
+%config InlineBackend.figure_format = "retina" # High-res graphs (rendered irrelevant by svg option below)
+%config InlineBackend.print_figure_kwargs = {"bbox_inches": "tight"} # No extra white space
+%config InlineBackend.figure_format = "svg" # 'png' is default
  
 import warnings
 warnings.filterwarnings("ignore") # Because we are adults
@@ -90,34 +89,34 @@ from dfply import *
 # iPyPublish imports
 # from ipypublish.scripts.ipynb_latex_setup import *
 # from IPython.display import SVG, display, Markdown
+```
 
-# %% [markdown]
-# # Experiment 1
+# Experiment 1
 
-# %% [markdown]
-# ## Methods
 
-# %% [markdown]
-# ### Stimuli
-# - Two types of sound stimuli: tones and guitar chords
-#     - Beeps alternate between pure C4 tone (261.626 Hz) and pure G tone (391.995 Hz)
-#     - Guitar chords alternate between a C chord and a G chord strummed on guitar, taken from [here](https://www.apronus.com/music/onlineguitar.htm), which were subsequently recorded and amplified (25.98 db and 25.065 db respectively) using Audacity version 2.3.0 (using Effect --> Amplify) via Windows 10's Stereo Mix drivers.
-# - 20 sounds per stimulus
-# - Crossfade of 50 ms between sounds
-# - Each stimulus was 10,000 milliseconds long, with an additional 150 ms of silence at the start of the recording.
-# - 9 switch rates between 0.1 and 0.9
-# - 10 stimuli for each switch rate, for a total of 180 stimuli, all presented as a single block. 30 frame ITI.
-# - 20 repeated stimuli chosen via the same random choice for each subject (presentation order was via a unique random choice for each subject, however).
-# - One practice beep stimulus at 0.5 switch rate presented at the start of the experiment.
-#
+## Methods
 
-# %% [markdown]
-# ## Results
 
-# %% [markdown]
-# ### Read in data
+### Stimuli
+- Two types of sound stimuli: tones and guitar chords
+    - Beeps alternate between pure C4 tone (261.626 Hz) and pure G tone (391.995 Hz)
+    - Guitar chords alternate between a C chord and a G chord strummed on guitar, taken from [here](https://www.apronus.com/music/onlineguitar.htm), which were subsequently recorded and amplified (25.98 db and 25.065 db respectively) using Audacity version 2.3.0 (using Effect --> Amplify) via Windows 10's Stereo Mix drivers.
+- 20 sounds per stimulus
+- Crossfade of 50 ms between sounds
+- Each stimulus was 10,000 milliseconds long, with an additional 150 ms of silence at the start of the recording.
+- 9 switch rates between 0.1 and 0.9
+- 10 stimuli for each switch rate, for a total of 180 stimuli, all presented as a single block. 30 frame ITI.
+- 20 repeated stimuli chosen via the same random choice for each subject (presentation order was via a unique random choice for each subject, however).
+- One practice beep stimulus at 0.5 switch rate presented at the start of the experiment.
 
-# %%
+
+
+## Results
+
+
+### Read in data
+
+```python
 import glob, os
 
 separator = r"\t"
@@ -138,11 +137,11 @@ for file_name in glob.glob(search):
 
 all_data.reset_index(inplace=True, drop=True)
 all_data.head()
+```
 
-# %% [markdown]
-# ### Determine stimulus type
+### Determine stimulus type
 
-# %%
+```python
 def get_stimulus_type(row):
     """
     All stimuli under 10 are guitar; the rest are tones.
@@ -151,36 +150,36 @@ def get_stimulus_type(row):
 
 all_data["Stimulus Type"] = all_data.apply(get_stimulus_type, axis=1)
 all_data.head()
+```
 
-# %% [markdown]
-# ### Determine if trial is a repeated stimulus
+### Determine if trial is a repeated stimulus
 
-# %%
+```python
 num_trials = 200
 num_repeated_trials = 20 # at end of task
 start_repeated_trial_index = num_trials - num_repeated_trials + 1
 
 all_data["Repeat Trial"] = all_data["Trial #"] >= start_repeated_trial_index
 all_data.head()
+```
 
-# %% [markdown]
-# ### Remove subjects with "None" ratings
+### Remove subjects with "None" ratings
 
-# %%
+```python
 subjects_with_missing_data = all_data[all_data["Rating"] == "None"]["Subject ID"]
 print(f"Bad subjects: \n {subjects_with_missing_data}")
 all_data = all_data[~all_data["Subject ID"].isin(subjects_with_missing_data)]
+```
 
-# %% [markdown]
-# ### Re-convert ratings to numeric
+### Re-convert ratings to numeric
 
-# %%
+```python
 all_data["Rating"] = pd.to_numeric(all_data["Rating"])
+```
 
-# %% [markdown]
-# ### Get subject reliability
+### Get subject reliability
 
-# %%
+```python
 subject_reliability_df = pd.DataFrame(
     index=[],
     columns=[
@@ -228,11 +227,11 @@ for subject_id in subject_ids:
     subject_reliability_df = subject_reliability_df.append(this_corr_row)
     
 subject_reliability_df
+```
 
-# %% [markdown]
-# ### Remove unreliable subjects
+### Remove unreliable subjects
 
-# %%
+```python
 # Keep subjects with positive correlation
 subject_reliability_df = subject_reliability_df[subject_reliability_df["correlation"] >= 0]
 # Keep subjects that have defined data
@@ -244,23 +243,23 @@ no_repeat_data = all_data[(all_data["Subject ID"].isin(reliable_subjects)) & (al
 print(f"Remaining participants: {subject_reliability_df.shape[0]}")
 print(f"Data without repeat trials:")
 no_repeat_data.head()
+```
 
-# %% [markdown]
-# ### Group results
-# Keep only reliable subjects and remove repeated trials.
+### Group results
+Keep only reliable subjects and remove repeated trials.
 
-# %%
+```python
 main_results = (
     no_repeat_data
     >> group_by("Condition", "Switch Rate", "Stimulus Type")
     >> summarize(mean_ratings=X.Rating.mean(), sd_ratings=X.Rating.std())
 )
 main_results.head()
+```
 
-# %% [markdown]
-# ### Plot results
+### Plot results
 
-# %%
+```python
 f, ax = plt.subplots(2, 1, figsize=(8, 12), sharex=True)
 sns.despine()
 for i, condition in enumerate(main_results["Condition"].unique()):
@@ -279,25 +278,25 @@ for i, condition in enumerate(main_results["Condition"].unique()):
     ax[i].set_title(f"'{condition.title()}' Results")
     ax[i].set(xlabel='Switch Rate', ylabel='Mean Rating')    
 plt.show()
+```
 
-# %% [markdown]
-# # Sanity checks
+# Sanity checks
 
-# %% [markdown]
-# ## Same number of trials for all subjects?
-# All subjects should have exactly 200 trials.
 
-# %%
+## Same number of trials for all subjects?
+All subjects should have exactly 200 trials.
+
+```python
 subject_ids = all_data["Subject ID"].unique()
 for subject_id in subject_ids:
     subject_data = all_data >> mask(X["Subject ID"] == subject_id)
     print(subject_data.shape)
+```
 
-# %% [markdown]
-# ## All stimuli same length?
-# Should all be 10,100 ms long.
+## All stimuli same length?
+Should all be 10,100 ms long.
 
-# %%
+```python
 test_sanity = False
 if test_sanity:
     from pydub import AudioSegment
@@ -313,26 +312,27 @@ if test_sanity:
         song_durations.append(len(song))
 
     print(set(song_durations))
+```
 
-# %% [markdown]
-# # Exploration
+# Exploration
 
-# %% [markdown]
-# ## RT
 
-# %%
+## RT
+
+```python
 sns.set_style("ticks")
 sns.distplot(all_data["RT"])
 sns.despine()
+```
 
-# %% [markdown]
-# # Scrap
+# Scrap
 
-# %%
+```python
 # Remove subjects with "None" rating data
 all_data = all_data.replace(to_replace="None", value=np.nan).dropna()
+```
 
-# %% {"lines_to_next_cell": 0}
+```python
 # subject_reliability_df = pd.DataFrame(
 #     index=[],
 #     columns=[
@@ -402,7 +402,7 @@ all_data = all_data.replace(to_replace="None", value=np.nan).dropna()
 #     subject_reliability_df = subject_reliability_df.append(this_corr_row)
     
 # subject_reliability_df
-# %% [markdown]
-#
-#
-#
+```
+
+
+
