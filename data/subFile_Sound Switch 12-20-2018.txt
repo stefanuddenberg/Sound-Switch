@@ -1,13 +1,8 @@
 Subject ID	Condition	Start Date	Experiment	Testing Location	Experimenter Initials	Subject Initials
-9	patterned	2018_Dec_21_1110	Sound Switch 12-20-2018	home	sdu	sdu
-10	beautiful	2018_Dec_21_1621	Sound Switch 12-20-2018	home	sdu	sdu
-11	patterned	2018_Dec_21_1623	Sound Switch 12-20-2018	home	sdu	sdu
-12	beautiful	2018_Dec_21_1716	Sound Switch 12-20-2018	home	sdu	sdu
-12	beautiful	2018_Dec_21_1719	Sound Switch 12-20-2018	home	sdu	sdu
-12	beautiful	2018_Dec_21_1728	Sound Switch 12-20-2018	home	sdu	sdu
-12	beautiful	2018_Dec_21_1731	Sound Switch 12-20-2018	home	sdu	sdu
-12	beautiful	2018_Dec_31_2223	Sound Switch 12-20-2018	home	sdu	sdu
-13	patterned	2019_Jan_03_2018	Sound Switch 12-20-2018	home	sdu	sdu
-13	patterned	2019_Jan_03_2020	Sound Switch 12-20-2018	home	sdu	sdu
-13	patterned	2019_Jan_03_2021	Sound Switch 12-20-2018	home	sdu	sdu
-13	patterned	2019_Jan_03_2025	Sound Switch 12-20-2018	home	sdu	sdu
+01	patterned	2019_Feb_14_1305	Sound Switch 12-20-2018	318-laptop	bpl	WPH
+02	beautiful	2019_Feb_15_0925	Sound Switch 12-20-2018	318-laptop	bpl	LMM
+03	patterned	2019_Feb_15_1159	Sound Switch 12-20-2018	318-laptop	bpl	ST
+04	beautiful	2019_Feb_18_0916	Sound Switch 12-20-2018	318-laptop	bpl	CY
+05	patterned	2019_Feb_18_1301	Sound Switch 12-20-2018	318-laptop	bpl	YL
+06	beautiful	2019_Feb_18_1502	Sound Switch 12-20-2018	318-laptop	bpl	KD
+07	patterned	2019_Feb_18_1638	Sound Switch 12-20-2018	318-laptop	bpl	SJ
