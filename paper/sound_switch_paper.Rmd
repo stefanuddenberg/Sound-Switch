@@ -25,12 +25,15 @@ jupyter:
     name: python
     nbconvert_exporter: python
     pygments_lexer: ipython3
-    version: 3.7.2
+    version: 3.6.7
   toc:
+    base_numbering: 1
     nav_menu: {}
     number_sections: true
     sideBar: true
     skip_h1_title: false
+    title_cell: Table of Contents
+    title_sidebar: Contents
     toc_cell: false
     toc_position: {}
     toc_section_display: block
@@ -62,6 +65,11 @@ jupyter:
 ---
 
 # Sound Switch
+
+
+# TODOs
+- Include musical background in analyses; start with dichotomized variable, move on to continuous.
+- Make visual analogue of this task. White square, black square, 500 ms each for 10 s.
 
 
 # Imports
@@ -117,7 +125,7 @@ from dfply import *
 import glob, os
 
 separator = r"\t"
-data_dir = "../data"
+data_dir = "../data/2019-03-07"
 prefix = "Sound Switch"
 extension = ".txt"
 search = f"{data_dir}/{prefix}*{extension}"
@@ -136,7 +144,41 @@ all_data.reset_index(inplace=True, drop=True)
 all_data.head()
 ```
 
-### Determine stimulus type
+### Demographics
+Race demographics are borked for the moment; will fix later.
+
+```{python}
+# Load data
+debriefing_file_name = f"{data_dir}/sound_switch_debriefing.xlsx"
+debriefing_data = pd.read_excel(debriefing_file_name)
+```
+
+```{python}
+# Get NA subjects
+na_subjects_index = debriefing_data[debriefing_data["Initials"].isna()].index
+print(f"NA subjects: {na_subjects_index}")
+# Remove NA subjects
+debriefing_data.drop(index=na_subjects_index, axis=0, inplace=True)
+
+debriefing_data.iloc[30:36]
+```
+
+#### Gender
+
+```{python}
+debriefing_data["Gender"].value_counts()
+```
+
+#### Age
+
+```{python}
+debriefing_data["Age"].describe().round(2)
+```
+
+### Preprocessing
+
+
+#### Determine stimulus type
 
 ```{python}
 def get_stimulus_type(row):
@@ -149,7 +191,7 @@ all_data["Stimulus Type"] = all_data.apply(get_stimulus_type, axis=1)
 all_data.head()
 ```
 
-### Determine if trial is a repeated stimulus
+#### Determine if trial is a repeated stimulus
 
 ```{python}
 num_trials = 200
@@ -160,7 +202,21 @@ all_data["Repeat Trial"] = all_data["Trial #"] >= start_repeated_trial_index
 all_data.head()
 ```
 
-### Get subject reliability
+#### Remove subjects with "None" ratings
+
+```{python}
+subjects_with_missing_data = all_data[all_data["Rating"] == "None"]["Subject ID"]
+print(f"Bad subjects: \n {subjects_with_missing_data}")
+all_data = all_data[~all_data["Subject ID"].isin(subjects_with_missing_data)]
+```
+
+#### Re-convert ratings to numeric
+
+```{python}
+all_data["Rating"] = pd.to_numeric(all_data["Rating"])
+```
+
+#### Get subject reliability
 
 ```{python}
 subject_reliability_df = pd.DataFrame(
@@ -209,10 +265,10 @@ for subject_id in subject_ids:
     this_corr_row = pd.DataFrame.from_dict(this_corr_row)
     subject_reliability_df = subject_reliability_df.append(this_corr_row)
     
-subject_reliability_df
+subject_reliability_df.round(3)
 ```
 
-### Remove unreliable subjects
+#### Remove unreliable subjects
 
 ```{python}
 # Keep subjects with positive correlation
@@ -228,7 +284,7 @@ print(f"Data without repeat trials:")
 no_repeat_data.head()
 ```
 
-### Group results
+#### Group results
 Keep only reliable subjects and remove repeated trials.
 
 ```{python}
@@ -237,7 +293,7 @@ main_results = (
     >> group_by("Condition", "Switch Rate", "Stimulus Type")
     >> summarize(mean_ratings=X.Rating.mean(), sd_ratings=X.Rating.std())
 )
-main_results.head()
+main_results.head().round(3)
 ```
 
 ### Plot results
@@ -261,6 +317,68 @@ for i, condition in enumerate(main_results["Condition"].unique()):
     ax[i].set_title(f"'{condition.title()}' Results")
     ax[i].set(xlabel='Switch Rate', ylabel='Mean Rating')    
 plt.show()
+```
+
+### Statistical tests
+
+
+#### Mixed measures ANOVA.
+
+```{python}
+# %load_ext rpy2.ipython
+```
+
+```{python}
+# Convert data to R format
+from rpy2.robjects import pandas2ri
+
+R_data = no_repeat_data >> select(
+    X["Subject ID"],
+    X["Condition"],
+    X["Stimulus Type"],
+    X["Switch Rate"],
+    X["Rating"],
+)
+R_data = pandas2ri.py2ri(R_data)
+R_data.head()
+```
+
+```{r magic_args='-i R_data -o anova_model,anova_model_summary'}
+library(afex)
+
+# Convert to numeric, due to pandas converting everything to strings
+R_data <- transform(R_data, Subject.ID = as.numeric(Subject.ID))
+R_data <- transform(R_data, Rating = as.numeric(Rating))
+R_data <- transform(R_data, Switch.Rate = as.numeric(Switch.Rate))
+anova_model <- aov_ez(
+    "Subject.ID",
+    "Rating",
+    R_data,
+    between=c("Condition"),
+    within=c("Switch.Rate", "Stimulus.Type"),
+    type=3 #type of sum squares to use; default is 3
+)
+anova_model_summary = summary(anova_model)
+anova_model_names = names(summary(anova_model))
+```
+
+```{python}
+print(anova_model)
+```
+
+#### Mixed linear model
+
+```{r magic_args='-i R_data -o linear_model'}
+library(afex)
+# Convert to numeric, due to pandas converting everything to strings
+R_data <- transform(R_data, Subject.ID = as.numeric(Subject.ID))
+R_data <- transform(R_data, Rating = as.numeric(Rating))
+R_data <- transform(R_data, Switch.Rate = as.numeric(Switch.Rate))
+linear_model <- mixed(Rating~Condition*Switch.Rate*Stimulus.Type+(Switch.Rate|Subject.ID)+(Stimulus.Type|Subject.ID),data=R_data)
+```
+
+```{python}
+print(linear_model)
 ```
 
 # Sanity checks
@@ -308,10 +426,97 @@ sns.distplot(all_data["RT"])
 sns.despine()
 ```
 
+```{python}
+no_repeat_data["RT"].describe()
+```
+
+```{python}
+no_repeat_data[no_repeat_data["RT"] > 18]
+```
+
+```{python}
+sns.distplot(no_repeat_data["RT"])
+sns.despine()
+```
+
 # Scrap
 
 ```{python}
-
+# Remove subjects with "None" rating data
+# all_data = all_data.replace(to_replace="None", value=np.nan).dropna()
 ```
+
+```{python lines_to_next_cell=0}
+# subject_reliability_df = pd.DataFrame(
+#     index=[],
+#     columns=[
+#         "subject_id",
+#         "condition",        
+#         "correlation",
+#         "p-value",
+#         "fisher_z",
+#     ],
+# )
+# subject_ids = all_data["Subject ID"].unique()
+# for subject_id in subject_ids:
+#     subject_data = all_data >> mask(X["Subject ID"] == subject_id)
+#     subject_data.sort_values(by=["File Name"], inplace=True)
+#     repeated_stimuli = (
+#         subject_data 
+#         >> mask(X["Repeat Trial"] == True)
+#         >> select(["File Name"])
+#     )
+    
+#     first_ratings_data = subject_data[
+#         (subject_data["File Name"].isin(repeated_stimuli["File Name"]))
+#         & (subject_data["Repeat Trial"] == False)
+#     ]["Rating"].tolist()
+    
+#     second_ratings_data = subject_data[
+#         (subject_data["File Name"].isin(repeated_stimuli["File Name"]))
+#         & (subject_data["Repeat Trial"] == True)
+#     ]["Rating"].tolist()
+    
+#     # Correct for subjects where one or more repeat trials had to be discarded
+#     if len(first_ratings_data) != len(second_ratings_data):
+#         first_ratings_stimuli = subject_data[
+#             (subject_data["File Name"].isin(repeated_stimuli["File Name"]))
+#             & (subject_data["Repeat Trial"] == False)
+#         ]["File Name"].tolist()
+        
+#         second_ratings_stimuli = subject_data[
+#             (subject_data["File Name"].isin(repeated_stimuli["File Name"]))
+#             & (subject_data["Repeat Trial"] == True)
+#         ]["File Name"].tolist()
+                
+#         if len(first_ratings_stimuli) < len(second_ratings_stimuli):
+#             smaller_set = set(first_ratings_stimuli)
+#             larger_set = set(second_ratings_stimuli)
+#         else:
+#             smaller_set = set(second_ratings_stimuli)
+#             larger_set = set(first_ratings_stimuli)
+                    
+#         missing_stimuli = larger_set.difference(smaller_set)
+#         pass
+    
+#     subject_reliability_corr = scipy.stats.pearsonr(
+#         first_ratings_data, second_ratings_data
+#     )
+    
+#     # Needs to be in arrays for pandas
+#     # XXX break down by stimulus type?
+#     this_corr_row = {
+#         "subject_id": [subject_id],
+#         "condition": [subject_data["Condition"].iloc[0]],        
+#         "correlation": [subject_reliability_corr[0]],
+#         "p-value": [subject_reliability_corr[1]],
+#         "fisher_z": [np.arctanh(subject_reliability_corr[0])],
+#     }
+#     this_corr_row = pd.DataFrame.from_dict(this_corr_row)
+#     subject_reliability_df = subject_reliability_df.append(this_corr_row)
+    
+# subject_reliability_df
+```
+
 
 

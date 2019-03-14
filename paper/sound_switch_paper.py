@@ -64,10 +64,15 @@
 #     window_display: false
 # ---
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 # # Sound Switch
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
+# # TODOs
+# - Include musical background in analyses; start with dichotomized variable, move on to continuous.
+# - Make visual analogue of this task. White square, black square, 500 ms each for 10 s.
+
+# %% [markdown] {"trusted": true}
 # # Imports
 
 # %%
@@ -91,13 +96,13 @@ from dfply import *
 # from ipypublish.scripts.ipynb_latex_setup import *
 # from IPython.display import SVG, display, Markdown
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 # # Experiment 1
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 # ## Methods
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 # ### Stimuli
 # - Two types of sound stimuli: tones and guitar chords
 #     - Beeps alternate between pure C4 tone (261.626 Hz) and pure G tone (391.995 Hz)
@@ -111,17 +116,17 @@ from dfply import *
 # - One practice beep stimulus at 0.5 switch rate presented at the start of the experiment.
 #
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 # ## Results
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 # ### Read in data
 
 # %%
 import glob, os
 
 separator = r"\t"
-data_dir = "../data"
+data_dir = "../data/2019-03-07"
 prefix = "Sound Switch"
 extension = ".txt"
 search = f"{data_dir}/{prefix}*{extension}"
@@ -139,8 +144,41 @@ for file_name in glob.glob(search):
 all_data.reset_index(inplace=True, drop=True)
 all_data.head()
 
-# %% [markdown]
-# ### Determine stimulus type
+# %% [markdown] {"trusted": true}
+# ### Demographics
+# Race demographics are borked for the moment; will fix later.
+
+# %%
+# Load data
+debriefing_file_name = f"{data_dir}/sound_switch_debriefing.xlsx"
+debriefing_data = pd.read_excel(debriefing_file_name)
+
+# %%
+# Get NA subjects
+na_subjects_index = debriefing_data[debriefing_data["Initials"].isna()].index
+print(f"NA subjects: {na_subjects_index}")
+# Remove NA subjects
+debriefing_data.drop(index=na_subjects_index, axis=0, inplace=True)
+
+debriefing_data.iloc[30:36]
+
+# %% [markdown] {"trusted": true}
+# #### Gender
+
+# %%
+debriefing_data["Gender"].value_counts()
+
+# %% [markdown] {"trusted": true}
+# #### Age
+
+# %%
+debriefing_data["Age"].describe().round(2)
+
+# %% [markdown] {"trusted": true}
+# ### Preprocessing
+
+# %% [markdown] {"trusted": true}
+# #### Determine stimulus type
 
 # %%
 def get_stimulus_type(row):
@@ -152,8 +190,8 @@ def get_stimulus_type(row):
 all_data["Stimulus Type"] = all_data.apply(get_stimulus_type, axis=1)
 all_data.head()
 
-# %% [markdown]
-# ### Determine if trial is a repeated stimulus
+# %% [markdown] {"trusted": true}
+# #### Determine if trial is a repeated stimulus
 
 # %%
 num_trials = 200
@@ -163,22 +201,22 @@ start_repeated_trial_index = num_trials - num_repeated_trials + 1
 all_data["Repeat Trial"] = all_data["Trial #"] >= start_repeated_trial_index
 all_data.head()
 
-# %% [markdown]
-# ### Remove subjects with "None" ratings
+# %% [markdown] {"trusted": true}
+# #### Remove subjects with "None" ratings
 
 # %%
 subjects_with_missing_data = all_data[all_data["Rating"] == "None"]["Subject ID"]
 print(f"Bad subjects: \n {subjects_with_missing_data}")
 all_data = all_data[~all_data["Subject ID"].isin(subjects_with_missing_data)]
 
-# %% [markdown]
-# ### Re-convert ratings to numeric
+# %% [markdown] {"trusted": true}
+# #### Re-convert ratings to numeric
 
 # %%
 all_data["Rating"] = pd.to_numeric(all_data["Rating"])
 
-# %% [markdown]
-# ### Get subject reliability
+# %% [markdown] {"trusted": true}
+# #### Get subject reliability
 
 # %%
 subject_reliability_df = pd.DataFrame(
@@ -227,10 +265,10 @@ for subject_id in subject_ids:
     this_corr_row = pd.DataFrame.from_dict(this_corr_row)
     subject_reliability_df = subject_reliability_df.append(this_corr_row)
     
-subject_reliability_df
+subject_reliability_df.round(3)
 
-# %% [markdown]
-# ### Remove unreliable subjects
+# %% [markdown] {"trusted": true}
+# #### Remove unreliable subjects
 
 # %%
 # Keep subjects with positive correlation
@@ -245,8 +283,8 @@ print(f"Remaining participants: {subject_reliability_df.shape[0]}")
 print(f"Data without repeat trials:")
 no_repeat_data.head()
 
-# %% [markdown]
-# ### Group results
+# %% [markdown] {"trusted": true}
+# #### Group results
 # Keep only reliable subjects and remove repeated trials.
 
 # %%
@@ -255,9 +293,9 @@ main_results = (
     >> group_by("Condition", "Switch Rate", "Stimulus Type")
     >> summarize(mean_ratings=X.Rating.mean(), sd_ratings=X.Rating.std())
 )
-main_results.head()
+main_results.head().round(3)
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 # ### Plot results
 
 # %%
@@ -280,10 +318,68 @@ for i, condition in enumerate(main_results["Condition"].unique()):
     ax[i].set(xlabel='Switch Rate', ylabel='Mean Rating')    
 plt.show()
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
+# ### Statistical tests
+
+# %% [markdown] {"trusted": true}
+# #### Mixed measures ANOVA.
+
+# %%
+# %load_ext rpy2.ipython
+
+# %%
+# Convert data to R format
+from rpy2.robjects import pandas2ri
+
+R_data = no_repeat_data >> select(
+    X["Subject ID"],
+    X["Condition"],
+    X["Stimulus Type"],
+    X["Switch Rate"],
+    X["Rating"],
+)
+R_data = pandas2ri.py2ri(R_data)
+R_data.head()
+
+# %% {"magic_args": "-i R_data -o anova_model,anova_model_summary", "language": "R"}
+# library(afex)
+#
+# # Convert to numeric, due to pandas converting everything to strings
+# R_data <- transform(R_data, Subject.ID = as.numeric(Subject.ID))
+# R_data <- transform(R_data, Rating = as.numeric(Rating))
+# R_data <- transform(R_data, Switch.Rate = as.numeric(Switch.Rate))
+# anova_model <- aov_ez(
+#     "Subject.ID",
+#     "Rating",
+#     R_data,
+#     between=c("Condition"),
+#     within=c("Switch.Rate", "Stimulus.Type"),
+#     type=3 #type of sum squares to use; default is 3
+# )
+# anova_model_summary = summary(anova_model)
+# anova_model_names = names(summary(anova_model))
+
+# %%
+print(anova_model)
+
+# %% [markdown] {"trusted": true}
+# #### Mixed linear model
+
+# %% {"magic_args": "-i R_data -o linear_model", "language": "R"}
+# library(afex)
+# # Convert to numeric, due to pandas converting everything to strings
+# R_data <- transform(R_data, Subject.ID = as.numeric(Subject.ID))
+# R_data <- transform(R_data, Rating = as.numeric(Rating))
+# R_data <- transform(R_data, Switch.Rate = as.numeric(Switch.Rate))
+# linear_model <- mixed(Rating~Condition*Switch.Rate*Stimulus.Type+(Switch.Rate|Subject.ID)+(Stimulus.Type|Subject.ID),data=R_data)
+
+# %%
+print(linear_model)
+
+# %% [markdown] {"trusted": true}
 # # Sanity checks
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 # ## Same number of trials for all subjects?
 # All subjects should have exactly 200 trials.
 
@@ -293,7 +389,7 @@ for subject_id in subject_ids:
     subject_data = all_data >> mask(X["Subject ID"] == subject_id)
     print(subject_data.shape)
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 # ## All stimuli same length?
 # Should all be 10,100 ms long.
 
@@ -314,10 +410,10 @@ if test_sanity:
 
     print(set(song_durations))
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 # # Exploration
 
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 # ## RT
 
 # %%
@@ -325,12 +421,22 @@ sns.set_style("ticks")
 sns.distplot(all_data["RT"])
 sns.despine()
 
-# %% [markdown]
+# %%
+no_repeat_data["RT"].describe()
+
+# %%
+no_repeat_data[no_repeat_data["RT"] > 18]
+
+# %%
+sns.distplot(no_repeat_data["RT"])
+sns.despine()
+
+# %% [markdown] {"trusted": true}
 # # Scrap
 
 # %%
 # Remove subjects with "None" rating data
-all_data = all_data.replace(to_replace="None", value=np.nan).dropna()
+# all_data = all_data.replace(to_replace="None", value=np.nan).dropna()
 
 # %% {"lines_to_next_cell": 0}
 # subject_reliability_df = pd.DataFrame(
@@ -402,7 +508,7 @@ all_data = all_data.replace(to_replace="None", value=np.nan).dropna()
 #     subject_reliability_df = subject_reliability_df.append(this_corr_row)
     
 # subject_reliability_df
-# %% [markdown]
+# %% [markdown] {"trusted": true}
 #
 #
 #
