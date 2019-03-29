@@ -9,12 +9,11 @@
 #
 # Author: Stefan Uddenberg
 
-# TODO: Update screen parameters
-
 ################################
 # * IMPORTS/SETUP
 ################################
-checked = False
+checked = True
+tested = False
 
 from psychopy import visual, monitors, core, event, os, data, gui, misc, logging
 from pydub import AudioSegment
@@ -280,13 +279,13 @@ subject_file = make_subject_file(data_dir, exp_info, sub_info_order)
 ################################
 # * DISPLAY ITEMS
 ################################
-screen_width = 1280
-screen_height = 720
+screen_width = 1024
+screen_height = 768
 units = "pix"
 resolution = [screen_width, screen_height]  # XXX: change for final computer
 
 win = visual.Window(
-    fullscr=False,
+    fullscr=True,
     size=resolution,
     colorSpace="rgb",
     color="white",
@@ -384,7 +383,7 @@ instructions_list.append(
     "There are no right or wrong answers, and we are interested "
     "in your gut feeling about the sequences of sounds. "
     "\n\n"
-    "The experiment as a whole should last roughly 30 minutes in total. "
+    "The experiment as a whole should last roughly 45 minutes in total. "
     "I know that it is difficult to stay focused "
     "for this long, but I ask you to please do your very best to "
     "remain as focused and attentive as "
