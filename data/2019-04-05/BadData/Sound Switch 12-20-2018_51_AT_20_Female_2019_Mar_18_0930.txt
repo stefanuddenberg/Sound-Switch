@@ -1,0 +1,1 @@
+Subject ID	Condition	Block #	Trial #	Switch Rate	Exemplar	File Name	Rating	RT	Rating History	Trial Duration	Block Duration	Session Duration	Experiment Duration	Start Date	Experiment	Testing Location	Experimenter Initials	Subject Initials

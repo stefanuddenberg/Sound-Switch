@@ -3,12 +3,17 @@
 #   hide_input: false
 #   jupytext:
 #     cell_metadata_filter: all
+#     metadata_filter:
+#       cells:
+#         additional: all
+#       notebook:
+#         additional: all
 #     notebook_metadata_filter: all
 #     text_representation:
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.2'
-#       jupytext_version: 1.0.3
+#       jupytext_version: 0.8.6
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -22,7 +27,7 @@
 #     name: python
 #     nbconvert_exporter: python
 #     pygments_lexer: ipython3
-#     version: 3.6.7
+#     version: 3.7.2
 #   toc:
 #     base_numbering: 1
 #     nav_menu: {}
@@ -61,15 +66,15 @@
 #     window_display: false
 # ---
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # # Sound Switch
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # # TODOs
 # - Include musical background in analyses; start with dichotomized variable, move on to continuous.
 # - Make visual analogue of this task. White square, black square, 500 ms each for 10 s.
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # # Imports
 
 # %%
@@ -93,13 +98,13 @@ from dfply import *
 # from ipypublish.scripts.ipynb_latex_setup import *
 # from IPython.display import SVG, display, Markdown
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # # Experiment 1
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # ## Methods
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # ### Stimuli
 # - Two types of sound stimuli: tones and guitar chords
 #     - Beeps alternate between pure C4 tone (261.626 Hz) and pure G tone (391.995 Hz)
@@ -113,17 +118,17 @@ from dfply import *
 # - One practice beep stimulus at 0.5 switch rate presented at the start of the experiment.
 #
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # ## Results
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # ### Read in data
 
 # %%
 import glob, os
 
 separator = r"\t"
-data_dir = "../data/2019-03-14"
+data_dir = "../data/2019-04-05"
 prefix = "Sound Switch"
 extension = ".txt"
 search = f"{data_dir}/{prefix}*{extension}"
@@ -141,7 +146,7 @@ for file_name in glob.glob(search):
 all_data.reset_index(inplace=True, drop=True)
 all_data.head()
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # ### Demographics
 # Race demographics are borked for the moment; will fix later.
 
@@ -159,23 +164,22 @@ debriefing_data.drop(index=na_subjects_index, axis=0, inplace=True)
 
 debriefing_data.iloc[30:36]
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # #### Gender
 
 # %%
 debriefing_data["Gender"].value_counts()
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # #### Age
 
 # %%
 debriefing_data["Age"].describe().round(2)
 
-
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # ### Preprocessing
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # #### Determine stimulus type
 
 # %%
@@ -188,7 +192,7 @@ def get_stimulus_type(row):
 all_data["Stimulus Type"] = all_data.apply(get_stimulus_type, axis=1)
 all_data.head()
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # #### Determine if trial is a repeated stimulus
 
 # %%
@@ -199,7 +203,7 @@ start_repeated_trial_index = num_trials - num_repeated_trials + 1
 all_data["Repeat Trial"] = all_data["Trial #"] >= start_repeated_trial_index
 all_data.head()
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # #### Remove subjects with "None" ratings
 
 # %%
@@ -207,13 +211,13 @@ subjects_with_missing_data = all_data[all_data["Rating"] == "None"]["Subject ID"
 print(f"Bad subjects: \n {subjects_with_missing_data}")
 all_data = all_data[~all_data["Subject ID"].isin(subjects_with_missing_data)]
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # #### Re-convert ratings to numeric
 
 # %%
 all_data["Rating"] = pd.to_numeric(all_data["Rating"])
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # #### Get subject reliability
 
 # %%
@@ -265,7 +269,7 @@ for subject_id in subject_ids:
     
 subject_reliability_df.round(3)
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # #### Remove unreliable subjects
 
 # %%
@@ -281,7 +285,7 @@ print(f"Remaining participants: {subject_reliability_df.shape[0]}")
 print(f"Data without repeat trials:")
 no_repeat_data.head()
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # #### Group results
 # Keep only reliable subjects and remove repeated trials.
 
@@ -293,7 +297,7 @@ main_results = (
 )
 main_results.head().round(3)
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # ### Plot results
 
 # %%
@@ -316,10 +320,10 @@ for i, condition in enumerate(main_results["Condition"].unique()):
     ax[i].set(xlabel='Switch Rate', ylabel='Mean Rating')    
 plt.show()
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # ### Statistical tests
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # #### Mixed measures ANOVA.
 
 # %%
@@ -360,7 +364,7 @@ R_data.head()
 # %%
 print(anova_model)
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # #### Mixed linear model
 
 # %%
@@ -375,10 +379,10 @@ print(anova_model)
 # %%
 # print(linear_model)
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # # Sanity checks
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # ## Same number of trials for all subjects?
 # All subjects should have exactly 200 trials.
 
@@ -388,7 +392,7 @@ for subject_id in subject_ids:
     subject_data = all_data >> mask(X["Subject ID"] == subject_id)
     print(subject_data.shape)
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # ## All stimuli same length?
 # Should all be 10,100 ms long.
 
@@ -409,10 +413,10 @@ if test_sanity:
 
     print(set(song_durations))
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # # Exploration
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # ## RT
 
 # %%
@@ -430,14 +434,14 @@ no_repeat_data[no_repeat_data["RT"] > 18]
 sns.distplot(no_repeat_data["RT"])
 sns.despine()
 
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 # # Scrap
 
 # %%
 # Remove subjects with "None" rating data
 # all_data = all_data.replace(to_replace="None", value=np.nan).dropna()
 
-# %%
+# %% {"lines_to_next_cell": 0}
 # subject_reliability_df = pd.DataFrame(
 #     index=[],
 #     columns=[
@@ -507,7 +511,7 @@ sns.despine()
 #     subject_reliability_df = subject_reliability_df.append(this_corr_row)
     
 # subject_reliability_df
-# %% [markdown] {"trusted": true}
+# %% [markdown]
 #
 #
 #

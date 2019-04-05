@@ -1,0 +1,101 @@
+Subject ID	Condition	Start Date	Experiment	Testing Location	Experimenter Initials	Subject Initials
+01	patterned	2019_Feb_14_1305	Sound Switch 12-20-2018	318-laptop	bpl	WPH
+02	beautiful	2019_Feb_15_0925	Sound Switch 12-20-2018	318-laptop	bpl	LMM
+03	patterned	2019_Feb_15_1159	Sound Switch 12-20-2018	318-laptop	bpl	ST
+04	beautiful	2019_Feb_18_0916	Sound Switch 12-20-2018	318-laptop	bpl	CY
+05	patterned	2019_Feb_18_1301	Sound Switch 12-20-2018	318-laptop	bpl	YL
+06	beautiful	2019_Feb_18_1502	Sound Switch 12-20-2018	318-laptop	bpl	KD
+07	patterned	2019_Feb_18_1638	Sound Switch 12-20-2018	318-laptop	bpl	SJ
+08	beautiful	2019_Feb_19_0837	Sound Switch 12-20-2018	318-laptop	bpl	VE
+09	patterned	2019_Feb_19_1009	Sound Switch 12-20-2018	318-laptop	bpl	OO
+10	beautiful	2019_Feb_19_1118	Sound Switch 12-20-2018	318-laptop	bpl	SB
+11	patterned	2019_Feb_19_1356	Sound Switch 12-20-2018	318-laptop	bpl	TZ
+12	beautiful	2019_Feb_19_1522	Sound Switch 12-20-2018	318-laptop	bpl	CF
+13	patterned	2019_Feb_19_1650	Sound Switch 12-20-2018	318-laptop	bpl	LS
+14	beautiful	2019_Feb_20_0904	Sound Switch 12-20-2018	318-laptop	bpl	YA
+15	patterned	2019_Feb_20_1044	Sound Switch 12-20-2018	318-laptop	bpl	MG
+16	beautiful	2019_Feb_20_1336	Sound Switch 12-20-2018	318-laptop	bpl	SY
+17	patterned	2019_Feb_20_1514	Sound Switch 12-20-2018	318-laptop	bpl	BR
+18	beautiful	2019_Feb_21_0835	Sound Switch 12-20-2018	318-laptop	bpl	MR
+19	patterned	2019_Feb_21_1039	Sound Switch 12-20-2018	318-laptop	bpl	RYC
+20	beautiful	2019_Feb_21_1342	Sound Switch 12-20-2018	318-laptop	bpl	JM
+21	patterned	2019_Feb_21_1505	Sound Switch 12-20-2018	318-laptop	bpl	TC
+22	beautiful	2019_Feb_21_1629	Sound Switch 12-20-2018	318-laptop	bpl	RC
+23	patterned	2019_Feb_25_1039	Sound Switch 12-20-2018	318-laptop	bpl	MW
+24	beautiful	2019_Feb_25_1156	Sound Switch 12-20-2018	318-laptop	bpl	HK
+25	patterned	2019_Feb_25_1504	Sound Switch 12-20-2018	318-laptop	bpl	JR
+26	beautiful	2019_Feb_26_0847	Sound Switch 12-20-2018	318-laptop	bpl	SDJ
+27	patterned	2019_Feb_26_1320	Sound Switch 12-20-2018	318-laptop	bpl	AK
+28	beautiful	2019_Feb_26_1526	Sound Switch 12-20-2018	318-laptop	bpl	AED
+29	patterned	2019_Feb_27_0902	Sound Switch 12-20-2018	318-laptop	bpl	CZY
+30	beautiful	2019_Feb_27_1018	Sound Switch 12-20-2018	318-laptop	bpl	TW
+31	patterned	2019_Feb_27_1155	Sound Switch 12-20-2018	318-laptop	bpl	ADP
+32	beautiful	2019_Feb_28_0901	Sound Switch 12-20-2018	318-laptop	bpl	NID
+33	patterned	2019_Feb_28_1033	Sound Switch 12-20-2018	318-laptop	bpl	EG
+34	beautiful	2019_Feb_28_1148	Sound Switch 12-20-2018	318-laptop	bpl	
+34	beautiful	2019_Feb_28_1411	Sound Switch 12-20-2018	318-laptop	bpl	MTA
+35	patterned	2019_Feb_28_1526	Sound Switch 12-20-2018	318-laptop	bpl	CPC
+36	beautiful	2019_Mar_01_0833	Sound Switch 12-20-2018	318-laptop	bpl	KSM
+37	patterned	2019_Mar_04_0851	Sound Switch 12-20-2018	318-laptop	bpl	CG
+38	beautiful	2019_Mar_04_1024	Sound Switch 12-20-2018	318-laptop	bpl	NAS
+39	patterned	2019_Mar_05_0856	Sound Switch 12-20-2018	318-laptop	bpl	SYG
+40	beautiful	2019_Mar_05_1004	Sound Switch 12-20-2018	318-laptop	bpl	SN
+41	patterned	2019_Mar_05_1352	Sound Switch 12-20-2018	318-laptop	bpl	EB
+42	beautiful	2019_Mar_06_0836	Sound Switch 12-20-2018	318-laptop	bpl	FGM
+43	patterned	2019_Mar_06_1537	Sound Switch 12-20-2018	318-laptop	bpl	ZLK
+44	beautiful	2019_Mar_07_0901	Sound Switch 12-20-2018	318-laptop	bpl	TA
+45	patterned	2019_Mar_07_1349	Sound Switch 12-20-2018	318-laptop	bpl	CP
+46	beautiful	2019_Mar_07_1512	Sound Switch 12-20-2018	318-laptop	bpl	HC
+47	patterned	2019_Mar_08_0920	Sound Switch 12-20-2018	318-laptop	bpl	JG
+48	beautiful	2019_Mar_08_1553	Sound Switch 12-20-2018	318-laptop	bpl	MW
+49	patterned	2019_Mar_13_1335	Sound Switch 12-20-2018	318-laptop	bpl	AG
+50	beautiful	2019_Mar_15_0907	Sound Switch 12-20-2018	318-laptop	bpl	AM
+51	patterned	2019_Mar_18_0902	Sound Switch 12-20-2018	318-laptop	bpl	AT
+51	patterned	2019_Mar_18_0930	Sound Switch 12-20-2018	318-laptop	bpl	AT
+000	beautiful	2019_Mar_18_1000	Sound Switch 12-20-2018	318-laptop	bpl	bpl
+51	patterned	2019_Mar_18_1008	Sound Switch 12-20-2018	318-laptop	bpl	NP
+52	beautiful	2019_Mar_19_0857	Sound Switch 12-20-2018	318-laptop	bpl	AB
+53	patterned	2019_Mar_19_1319	Sound Switch 12-20-2018	318-laptop	bpl	VO
+54	beautiful	2019_Mar_19_1445	Sound Switch 12-20-2018	318-laptop	bpl	EWM
+000	beautiful	2019_Mar_20_0840	Sound Switch 12-20-2018	318-laptop	bpl	
+55	patterned	2019_Mar_20_0845	Sound Switch 12-20-2018	318-laptop	bpl	YG
+56	beautiful	2019_Mar_20_1032	Sound Switch 12-20-2018	318-laptop	bpl	JK
+57	patterned	2019_Mar_20_1353	Sound Switch 12-20-2018	318-laptop	bpl	JH
+58	beautiful	2019_Mar_20_1502	Sound Switch 12-20-2018	318-laptop	bpl	DC
+000	beautiful	2019_Mar_21_0918	Sound Switch 12-20-2018	318-laptop	bpl	
+59	patterned	2019_Mar_21_0922	Sound Switch 12-20-2018	318-laptop	bpl	MEL
+60	beautiful	2019_Mar_21_1339	Sound Switch 12-20-2018	318-laptop	bpl	BO
+61	patterned	2019_Mar_21_1500	Sound Switch 12-20-2018	318-laptop	bpl	ZH
+000	beautiful	2019_Mar_22_1022	Sound Switch 12-20-2018	318-laptop	bpl	
+62	beautiful	2019_Mar_22_1028	Sound Switch 12-20-2018	318-laptop	bpl	JWO
+63	patterned	2019_Mar_22_1151	Sound Switch 12-20-2018	318-laptop	bpl	MT
+000	beautiful	2019_Mar_25_0841	Sound Switch 12-20-2018	318-laptop	bpl	
+64	beautiful	2019_Mar_25_0844	Sound Switch 12-20-2018	318-laptop	bpl	SL
+65	patterned	2019_Mar_25_1014	Sound Switch 12-20-2018	318-laptop	bpl	TS
+66	beautiful	2019_Mar_25_1448	Sound Switch 12-20-2018	318-laptop	bpl	SK
+00	beautiful	2019_Mar_26_0838	Sound Switch 12-20-2018	318-laptop	bpl	
+67	patterned	2019_Mar_26_0843	Sound Switch 12-20-2018	318-laptop	bpl	SES
+00	beautiful	2019_Mar_27_0848	Sound Switch 12-20-2018	318-laptop	bpl	
+68	beautiful	2019_Mar_27_0855	Sound Switch 12-20-2018	318-laptop	bpl	HP
+69	patterned	2019_Mar_27_1019	Sound Switch 12-20-2018	318-laptop	bpl	ELG
+70	beautiful	2019_Mar_27_1141	Sound Switch 12-20-2018	318-laptop	bpl	JW
+71	patterned	2019_Mar_27_1712	Sound Switch 12-20-2018	318-laptop	bpl	ET
+000	beautiful	2019_Mar_28_0853	Sound Switch 12-20-2018	318-laptop	bpl	
+72	beautiful	2019_Mar_28_0858	Sound Switch 12-20-2018	318-laptop	bpl	NRC
+73	patterned	2019_Mar_28_1017	Sound Switch 12-20-2018	318-laptop	bpl	LM
+47	patterned	2019_Mar_28_1203	Sound Switch 12-20-2018	318-laptop	bpl	AC
+00	beautiful	2019_Mar_29_0847	Sound Switch 12-20-2018	318-laptop	bpl	
+74	beautiful	2019_Mar_29_0850	Sound Switch 12-20-2018	318-laptop	bpl	AB
+75	patterned	2019_Apr_01_0841	Sound Switch 12-20-2018	318-laptop	bpl	EJ
+00	beautiful	2019_Apr_01_1021	Sound Switch 12-20-2018	318-laptop	bpl	
+76	beautiful	2019_Apr_02_0838	Sound Switch 12-20-2018	318-laptop	bpl	GH
+77	patterned	2019_Apr_02_1348	Sound Switch 12-20-2018	318-laptop	bpl	HR
+000	beautiful	2019_Apr_03_0859	Sound Switch 12-20-2018	318-laptop	bpl	
+78	beautiful	2019_Apr_03_0906	Sound Switch 12-20-2018	318-laptop	bpl	JPR
+79	patterned	2019_Apr_03_1013	Sound Switch 12-20-2018	318-laptop	bpl	SF
+00	beautiful	2019_Apr_04_0839	Sound Switch 12-20-2018	318-laptop	bpl	
+80	beautiful	2019_Apr_04_0842	Sound Switch 12-20-2018	318-laptop	bpl	JC
+81	patterned	2019_Apr_04_1036	Sound Switch 12-20-2018	318-laptop	bpl	JG
+82	beautiful	2019_Apr_04_1154	Sound Switch 12-20-2018	318-laptop	bpl	NS
+83	patterned	2019_Apr_04_1528	Sound Switch 12-20-2018	318-laptop	bpl	AL
+84	beautiful	2019_Apr_04_1645	Sound Switch 12-20-2018	318-laptop	bpl	JL
