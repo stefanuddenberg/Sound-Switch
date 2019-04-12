@@ -72,7 +72,10 @@
 # %% [markdown]
 # # TODOs
 # - Include musical background in analyses; start with dichotomized variable, move on to continuous.
-# - Make visual analogue of this task. White square, black square, 500 ms each for 10 s.
+# - Time course analysis; do beauty ratings go down over the course of the experiment?
+# - Are the repeated stimuli liked more than the first time they were shown?
+# - Do their RTs go down?
+# - Look at first 50 trials and see if they are better than the second 50.
 
 # %% [markdown]
 # # Imports
@@ -128,7 +131,7 @@ from dfply import *
 import glob, os
 
 separator = r"\t"
-data_dir = "../data/2019-04-05"
+data_dir = "../data/2019-04-11"
 prefix = "Sound Switch"
 extension = ".txt"
 search = f"{data_dir}/{prefix}*{extension}"
@@ -301,20 +304,27 @@ main_results.head().round(3)
 # ### Plot results
 
 # %%
+results_for_plot = (
+    no_repeat_data
+    >> group_by("Condition", "Switch Rate", "Stimulus Type")
+)
+
+# %%
 f, ax = plt.subplots(2, 1, figsize=(8, 12), sharex=True)
 sns.despine()
 for i, condition in enumerate(main_results["Condition"].unique()):
-    these_results = main_results >> mask(X["Condition"] == condition)
+    these_results = results_for_plot >> mask(X["Condition"] == condition)
     # Convert complexity labels to more informative string labels.
     # Note that seaborn has problems with numbers as categories, 
     # and simple string conversion via `str` doesn't work.    
     sns.lineplot(
         x="Switch Rate",
-        y="mean_ratings",
+        y="Rating",
         hue="Stimulus Type",
         data=these_results,
         ax=ax[i],
-        linewidth=4
+        linewidth=4,
+        ci=95
     )
     ax[i].set_title(f"'{condition.title()}' Results")
     ax[i].set(xlabel='Switch Rate', ylabel='Mean Rating')    
@@ -343,8 +353,12 @@ R_data = no_repeat_data >> select(
 R_data = pandas2ri.py2ri(R_data)
 R_data.head()
 
-# %% {"magic_args": "-i R_data -o anova_model,anova_model_summary", "language": "R"}
+# %% {"magic_args": "-i R_data -o anova_model,anova_model_summary,ref_poly,poly_contrasts", "language": "R"}
 # library(afex)
+# library(lsmeans)
+# # afex_options(emmeans_model = "multivariate")
+# # afex_options("emmeans_mode")
+# # model = afex_options("emmeans_model")
 #
 # # Convert to numeric, due to pandas converting everything to strings
 # R_data <- transform(R_data, Subject.ID = as.numeric(Subject.ID))
@@ -356,13 +370,25 @@ R_data.head()
 #     R_data,
 #     between=c("Condition"),
 #     within=c("Switch.Rate", "Stimulus.Type"),
-#     type=3 #type of sum squares to use; default is 3
+#     type=3, # type of sum squares to use; default is 3,
+#     anova_table=list(es = "pes") # partial eta-squared; default is ges (generalized)
 # )
-# anova_model_summary = summary(anova_model)
-# anova_model_names = names(summary(anova_model))
+# anova_model_summary <- summary(anova_model)
+# anova_model_names <- names(summary(anova_model))
+# ref_poly <- lsmeans(anova_model, specs = c("Switch.Rate"))
+# poly_contrasts <- contrast(ref_poly,method="poly")
 
 # %%
 print(anova_model)
+
+# %% [markdown]
+# To reproduce our smallest observed effect size at 80% power, we'd need a sample size of 18 (per question condition) according to GPower. XXX Need to check via other means as well. XXX
+
+# %%
+print(poly_contrasts)
+
+# %% [markdown]
+# XXX Contrasts are not interpretable right now, since it collapses across both condition and stimulus type. Will need to separate those out.
 
 # %% [markdown]
 # #### Mixed linear model
@@ -378,6 +404,13 @@ print(anova_model)
 
 # %%
 # print(linear_model)
+
+# %%
+subject_ids = no_repeat_data["Subject ID"].unique()
+sum(subject_ids % 2 == 0)
+
+# %%
+subject_ids
 
 # %% [markdown]
 # # Sanity checks
@@ -436,6 +469,10 @@ sns.despine()
 
 # %% [markdown]
 # # Scrap
+
+# %%
+fmri = sns.load_dataset("fmri")
+fmri.head()
 
 # %%
 # Remove subjects with "None" rating data
