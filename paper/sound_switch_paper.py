@@ -71,11 +71,13 @@
 
 # %% [markdown]
 # # TODOs
-# - Include musical background in analyses; start with dichotomized variable, move on to continuous.
-# - Time course analysis; do beauty ratings go down over the course of the experiment?
-# - Are the repeated stimuli liked more than the first time they were shown?
-# - Do their RTs go down?
-# - Look at first 50 trials and see if they are better than the second 50.
+# - Include musical background in analyses; clean up data to allow for continuous analysis. Dichotomous analysis shows no visible difference.
+# - Time course analysis; do beauty ratings go down over the course of the experiment? -- Yes, they do seem to be slightly numerically lower across halves, but the pattern persists. Haven't done stats on this.
+# - Are the repeated stimuli liked more than the first time they were shown? Yes, very slightly (only 1.83 points), and only for beauty condition
+# - Do their RTs go down? Yes, they are quicker for repeated stimuli.
+# - Color vs. sound pitted against each other. So it's a cross-modal experiment. Both shapes and sounds are perfectly correlated (but randomly assigned to one another, so white goes with beep for half the participants, boop for the other half). How do beauty ratings look? More like color or sound? 
+#     - Decide at a later date which stimuli to use. We don't want the auditory stimuli to be much more beautiful than the visual stimuli, for example. Then they might dominate for no good reason.
+# - Note the asymmetry in pattern judgments; lower switch rate less patterned than high switch rate; why?
 
 # %% [markdown]
 # # Imports
@@ -96,10 +98,11 @@ import pandas as pd
 import scipy
 import seaborn as sns
 from dfply import *
+from IPython.display import SVG, display, Markdown
 
 # iPyPublish imports
 # from ipypublish.scripts.ipynb_latex_setup import *
-# from IPython.display import SVG, display, Markdown
+
 
 # %% [markdown]
 # # Experiment 1
@@ -131,7 +134,7 @@ from dfply import *
 import glob, os
 
 separator = r"\t"
-data_dir = "../data/2019-04-11"
+data_dir = "../data/2019-04-18"
 prefix = "Sound Switch"
 extension = ".txt"
 search = f"{data_dir}/{prefix}*{extension}"
@@ -310,25 +313,28 @@ results_for_plot = (
 )
 
 # %%
-f, ax = plt.subplots(2, 1, figsize=(8, 12), sharex=True)
-sns.despine()
-for i, condition in enumerate(main_results["Condition"].unique()):
-    these_results = results_for_plot >> mask(X["Condition"] == condition)
-    # Convert complexity labels to more informative string labels.
-    # Note that seaborn has problems with numbers as categories, 
-    # and simple string conversion via `str` doesn't work.    
-    sns.lineplot(
-        x="Switch Rate",
-        y="Rating",
-        hue="Stimulus Type",
-        data=these_results,
-        ax=ax[i],
-        linewidth=4,
-        ci=95
-    )
-    ax[i].set_title(f"'{condition.title()}' Results")
-    ax[i].set(xlabel='Switch Rate', ylabel='Mean Rating')    
-plt.show()
+def plot_results(data):
+    f, ax = plt.subplots(2, 1, figsize=(8, 12), sharex=True)
+    sns.despine()
+    for i, condition in enumerate(data["Condition"].unique()):
+        these_results = data >> mask(X["Condition"] == condition)
+        # Convert complexity labels to more informative string labels.
+        # Note that seaborn has problems with numbers as categories, 
+        # and simple string conversion via `str` doesn't work.    
+        sns.lineplot(
+            x="Switch Rate",
+            y="Rating",
+            hue="Stimulus Type",
+            data=these_results,
+            ax=ax[i],
+            linewidth=4,
+            ci=95
+        )
+        ax[i].set_title(f"'{condition.title()}' Results")
+        ax[i].set(xlabel='Switch Rate', ylabel='Mean Rating')    
+    plt.show()
+
+plot_results(results_for_plot)
 
 # %% [markdown]
 # ### Statistical tests
@@ -450,6 +456,240 @@ if test_sanity:
 # # Exploration
 
 # %% [markdown]
+# ## Effect of musical experience on ratings
+
+# %%
+music_experience = ["Yes.", "No."]
+for experience in music_experience:
+    these_participants = (
+        debriefing_data
+        >> mask(X["Any Musical Background or Experience?"] == experience)
+        >> select(["Sub #"])
+    )
+    
+    these_data = (
+        no_repeat_data
+        >> group_by("Condition", "Switch Rate", "Stimulus Type")
+        >> mask(X["Subject ID"].isin(these_participants["Sub #"].unique()))
+    )
+    
+    display(Markdown(f"#### Music Experience: {experience}"))
+    plot_results(these_data)
+
+# %% [markdown]
+# ## Timecourse analysis
+# Do ratings change over the course of the experiment?
+
+# %%
+num_trials = max(no_repeat_data["Trial #"])
+
+first_half_trials_data = (
+    no_repeat_data
+    >> mask(X["Trial #"] <= num_trials/2)    
+)
+
+second_half_trials_data = (
+    no_repeat_data
+    >> mask(X["Trial #"] > num_trials/2)    
+)
+
+dfs = [first_half_trials_data, second_half_trials_data]
+
+for i, df in enumerate(dfs):
+    half_for_plot = (
+        df
+        >> group_by("Condition", "Switch Rate", "Stimulus Type")
+    )
+    display(Markdown(f"#### Half: {i+1}"))
+    plot_results(half_for_plot)
+
+# %% [markdown]
+# ### Looking at first 50 vs. second 50 trials
+
+# %%
+first_half_trials_data = (
+    no_repeat_data
+    >> mask(X["Trial #"] <= 50)    
+)
+
+second_half_trials_data = (
+    no_repeat_data
+    >> mask(X["Trial #"] > 50)
+    >> mask(X["Trial #"] <= 100)
+)
+
+dfs = [first_half_trials_data, second_half_trials_data]
+
+for i, df in enumerate(dfs):
+    half_for_plot = (
+        df
+        >> group_by("Condition", "Switch Rate", "Stimulus Type")
+    )
+    display(Markdown(f"#### Half: {i+1}"))
+    plot_results(half_for_plot)
+
+# %% [markdown]
+# ### How about RTs?
+# Doesn't look like it makes a big difference.
+
+# %%
+num_trials = max(no_repeat_data["Trial #"])
+
+first_half_trials_data = (
+    no_repeat_data
+    >> mask(X["Trial #"] <= num_trials/2)    
+)
+
+second_half_trials_data = (
+    no_repeat_data
+    >> mask(X["Trial #"] > num_trials/2)    
+)
+
+dfs = [first_half_trials_data, second_half_trials_data]
+
+for i, df in enumerate(dfs):
+    half_for_RTs = (
+        df
+        >> group_by("Condition", "Switch Rate", "Stimulus Type")
+    )
+    display(Markdown(f"#### Half: {i+1}, mean RT: {half_for_RTs['RT'].mean().round(3)}"))
+
+# %% [markdown]
+# ## Are repeated stimuli liked more the first time they are shown?
+
+# %%
+template_df = pd.DataFrame(
+    index=[],
+    columns=[
+        "subject_id",
+        "condition",
+        "first_ratings",
+        "second_ratings",
+        "differences",
+        "first_RTs",
+        "second_RTs",
+        "RT_differences",
+    ],
+)
+
+repeated_differences_df = template_df.copy(deep=True)
+
+subject_ids = all_data["Subject ID"].unique()
+for subject_id in subject_ids:
+    subject_df = template_df.copy(deep=True)
+    subject_data = all_data >> mask(X["Subject ID"] == subject_id)
+    subject_data.sort_values(by=["File Name"], inplace=True)
+    repeated_stimuli = (
+        subject_data >> mask(X["Repeat Trial"] == True) >> select(["File Name"])
+    )
+
+    subject_df["first_ratings"] = np.array(
+        subject_data[
+            (subject_data["File Name"].isin(repeated_stimuli["File Name"]))
+            & (subject_data["Repeat Trial"] == False)
+        ]["Rating"].tolist()
+    )
+
+    subject_df["second_ratings"] = np.array(
+        subject_data[
+            (subject_data["File Name"].isin(repeated_stimuli["File Name"]))
+            & (subject_data["Repeat Trial"] == True)
+        ]["Rating"].tolist()
+    )
+
+    subject_df["first_RTs"] = np.array(
+        subject_data[
+            (subject_data["File Name"].isin(repeated_stimuli["File Name"]))
+            & (subject_data["Repeat Trial"] == False)
+        ]["RT"].tolist()
+    )
+
+    subject_df["second_RTs"] = np.array(
+        subject_data[
+            (subject_data["File Name"].isin(repeated_stimuli["File Name"]))
+            & (subject_data["Repeat Trial"] == True)
+        ]["RT"].tolist()
+    )
+
+    subject_df["differences"] = (
+        subject_df["second_ratings"] - subject_df["first_ratings"]
+    )
+    subject_df["RT_differences"] = (
+        subject_df["second_RTs"] - subject_df["first_RTs"]
+    )
+    subject_df["subject_id"] = subject_id
+    subject_df["condition"] = subject_data["Condition"].iloc[0]
+
+    repeated_differences_df = repeated_differences_df.append(subject_df)
+
+# Convert to numeric type, since it's all objects for some reason
+cols = [
+    "first_ratings",
+    "second_ratings",
+    "differences",
+    "first_RTs",
+    "second_RTs",
+    "RT_differences",
+]
+repeated_differences_df[cols] = repeated_differences_df[cols].apply(
+    pd.to_numeric
+)
+repeated_differences_df.head()
+
+# %%
+ax = sns.scatterplot(
+    x="first_ratings",
+    y="second_ratings",
+    hue="condition",
+    data=repeated_differences_df,
+)
+
+# %%
+from scipy import stats
+
+conditions = ["beautiful", "patterned"]
+for condition in conditions:        
+    condition_data = (
+        repeated_differences_df
+        >> mask(X.condition == condition)        
+    )
+    t, p = stats.ttest_1samp(condition_data["differences"],0)
+    md = condition_data["differences"].mean().round(3)
+    print(f"{condition}: t:{round(t, 3)}, p:{round(p, 4)}, mean diff: {md}")
+
+
+# %%
+ax = sns.regplot(
+    x="first_ratings",
+    y="second_ratings",        
+    data=repeated_differences_df[repeated_differences_df["condition"] == "beautiful"]
+)
+
+# %% [markdown]
+# ### Are repeated stimuli responded to faster?
+# Yes, by up to 0.62 s in the beauty condition, and 0.53 s in the pattern condition. (Negative values mean the second RT is smaller, i.e. faster.)
+
+# %%
+conditions = ["beautiful", "patterned"]
+for condition in conditions:        
+    condition_data = (
+        repeated_differences_df
+        >> mask(X.condition == condition)        
+    )
+    t, p = stats.ttest_1samp(condition_data["RT_differences"],0)
+    md = condition_data["RT_differences"].mean().round(3)
+    print(f"{condition}: t:{round(t, 3)}, p:{round(p, 4)}, mean diff: {md}")
+
+# %%
+
+
+# %%
+
+
+# %%
+
+
+# %% [markdown]
 # ## RT
 
 # %%
@@ -461,7 +701,7 @@ sns.despine()
 no_repeat_data["RT"].describe()
 
 # %%
-no_repeat_data[no_repeat_data["RT"] > 18]
+no_repeat_data[no_repeat_data["RT"] > 18].head()
 
 # %%
 sns.distplot(no_repeat_data["RT"])
